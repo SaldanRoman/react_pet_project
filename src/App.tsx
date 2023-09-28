@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './App.css';
 import { ProductCard } from './components/product-card/product-card';
-import { Product } from './models/product.model';
-import axios from 'axios';
-import { PRODUCTS_URL } from './constants/api-urls';
+import { Loading } from './components/shared/loading';
+import { Error } from './components/shared/error';
+import { useProducts } from './hooks/product';
 
 function App() {
-  const [products, setProducts] = useState<Product[]>([]);
-
-  async function fetchProducts() {
-    const response = await axios.get<Product[]>(PRODUCTS_URL);
-    setProducts(response.data);
-  }
-
-  useEffect(()=> {fetchProducts()}, [])
+  const {products, isLoading, error} = useProducts();
   return (
     <div className='container mx-auto max-w-2xl pt-5'>
+      {isLoading && <Loading></Loading>}
+      {error && <Error error={error}></Error>}
       {products.map((product, index)=> <ProductCard product={product} key={`id-prod${index}`}></ProductCard>)}
     </div>
   );
